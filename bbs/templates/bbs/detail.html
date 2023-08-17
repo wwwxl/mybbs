@@ -1,0 +1,15 @@
+
+<fieldset>
+    <legend><h1>{{ object.Article_title }}</h1></legend>
+    <legend><h1>{{ object.Article_text }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+</fieldset>
+    {% for c in object.comment_set.all %}
+    <fieldset>
+        comment:
+        <p>{{ c.comment_text }}</p>
+        <p align="right">author:{{ c.author}}</p>
+        <p align="right">{{ c.pub_date}}</p>
+ 
+    </fieldset>
+    {% endfor %}
