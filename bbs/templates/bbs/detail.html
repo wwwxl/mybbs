@@ -1,7 +1,18 @@
+{% if request.user.is_authenticated %}
+    <p align="right">欢迎你啊老铁{{ request.user }}</p>
+    <a style="font-size:14px;display: block;text-align:right;" href = "{% url 'bbs:logout' %}">退出账号</a>
+{% else %}
+    <p align="right">你好像还没登录</p>
+    <a  style="font-size:14px;display: block;text-align:right;" href="{% url 'bbs:login_page' %}">登录</a>
+    <a  style="font-size:14px;display: block;text-align:right;" href="{% url 'bbs:register' %}">注册</a>
+{% endif %}
+
 
 <fieldset>
+    <legend><p>作者：{{ object.author }}</p></legend>
     <legend><h1>{{ object.Article_title }}</h1></legend>
-    <legend><h1>{{ object.Article_text }}</h1></legend>
+    <legend><p>{{ object.Article_text }}</p></legend>
+
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 </fieldset>
     {% for c in object.comment_set.all %}
@@ -13,3 +24,14 @@
  
     </fieldset>
     {% endfor %}
+
+
+
+<form action="{% url 'bbs:subcomment' article.id %}" method="post">
+
+    <!-- Django中需要POST数据的地方都必须有csrf_token -->
+    {% csrf_token %}
+
+        评论<input type="text" id="comment" name="comment">
+    <button type="submit" class="btn btn-primary">发表评论</button>
+</form>

@@ -1,8 +1,21 @@
+{% if request.user.is_authenticated %}
+    <p align="right">欢迎你啊老铁{{ request.user }}</p>
+    <a style="font-size:14px;display: block;text-align:right;" href = "{% url 'bbs:logout' %}">退出账号</a>
+{% else %}
+    <p align="right">你好像还没登录</p>
+    <a  style="font-size:14px;display: block;text-align:right;" href="{% url 'bbs:login_page' %}">登录</a>
+    <a  style="font-size:14px;display: block;text-align:right;" href="{% url 'bbs:register' %}">注册</a>
+{% endif %}
+
+
+
 {% if latest_Article_list %}
     <ul>
     {% for a in latest_Article_list %}
-    <li><a  href="{% url 'bbs:detail' a.id %}">{{ a.Article_title }}</a></li>
-    {{ a.Article_text }}
+
+    <li><a  href="{% url 'bbs:detail' a.id %}">文章标题：{{ a.Article_title }}</a></li>
+    作者：{{a.author}}
+    <!-- {{ a.Article_text }} -->
     {% endfor %}
     </ul>
 {% else %}
@@ -24,7 +37,7 @@
     <div class="form-group">
         <label for="body">文章正文</label>
         <!-- 文本区域 -->
-        <textarea type="text" class="form-control" id="body" name="body" rows="12"></textarea>
+        <textarea type="text" class="form-control" id="body" name="body" rows="5"></textarea>
     </div>
     <!-- 提交按钮 -->
     <button type="submit" class="btn btn-primary">完成</button>
