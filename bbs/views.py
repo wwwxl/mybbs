@@ -7,22 +7,59 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
+from . import serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
+# 改写rest_framework
+class IndexView(APIView):
+    def get(self,request):
+        articles = Article.objects.all()
+        ser = serializers.ArticleSerializers(instance=articles , many = True)
+        return Response(ser.data)
 
+class DetailView(APIView):
+    def get(self, request,pk):
+        # 尝试用了两个序列化器进行解决，不知道有没有更简单的解决方式？
+        articleinfo = Article.objects.get(id=pk)
+        artser = serializers.ArticleSerializers(instance=articleinfo)
 
-# Create your views here.
-class IndexView(generic.ListView):
-    template_name = "bbs/index.html"
-    context_object_name = "latest_Article_list"
-
-    def get_queryset(self):
-        """Return the last five published comment."""
-        return Article.objects.order_by("-pub_date")
+        comment = Comment.objects.filter(article_id = pk)  #可能有多条数据，单条用get
+        ser = serializers.CommentSerializers(instance=comment , many=True)
+        return_data = {
+            'article_info' :artser.data,
+            'comment_data' : ser.data
+        }
+        return Response(return_data)
     
-class DetailView(generic.DetailView):
-    model = Article
-    template_name = "bbs/detail.html"
-    # context_object_name = 'latest_comment_list'  如果不定义context_object_name的话，html模板中用Object
+    def post(self,request,pk):
+        pass
+
+
+    def delete(self,request,pk):
+        pass
+
+    def put(self,request,pk):
+        pass
+
+
+
+
+
+# 老版的views
+# Create your views here.
+# class IndexView(generic.ListView):
+#     template_name = "bbs/index.html"
+#     context_object_name = "latest_Article_list"
+
+#     def get_queryset(self):
+#         """Return the last five published comment."""
+#         return Article.objects.order_by("-pub_date")
+    
+# class DetailView(generic.DetailView):
+#     model = Article
+#     template_name = "bbs/detail.html"
+#     # context_object_name = 'latest_comment_list'  如果不定义context_object_name的话，html模板中用Object
 
 
 
